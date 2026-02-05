@@ -2,6 +2,7 @@ import React from 'react';
 import type { Habit } from '../../types';
 import { Card } from '../UI/Card';
 import { Button } from '../UI/Button';
+import { PRIORITY_MAP } from '../../types';
 
 interface HabitItemProps {
     habit: Habit;
@@ -47,8 +48,33 @@ export const HabitItem: React.FC<HabitItemProps> = ({ habit, onToggle, onDelete 
                         {isCompleted && <span style={{ color: 'white' }}>✓</span>}
                     </button>
                     <div>
-                        <h3 style={{ fontSize: 'var(--font-size-md)', fontWeight: 600 }}>{habit.title}</h3>
-                        {habit.description && <p style={{ fontSize: 'var(--font-size-sm)', color: 'hsl(var(--color-text-muted))' }}>{habit.description}</p>}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
+                            <h3 style={{ fontSize: 'var(--font-size-md)', fontWeight: 600, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                {habit.title}
+                                {habit.priority && (
+                                    <span
+                                        title={`${PRIORITY_MAP[habit.priority].label} Priority`}
+                                        style={{
+                                            width: '8px',
+                                            height: '8px',
+                                            borderRadius: '50%',
+                                            backgroundColor: PRIORITY_MAP[habit.priority].color,
+                                            display: 'inline-block'
+                                        }}
+                                    />
+                                )}
+                            </h3>
+                            <span style={{
+                                fontSize: 'var(--font-size-xs)',
+                                padding: '2px 8px',
+                                borderRadius: '12px',
+                                backgroundColor: 'rgba(255,255,255,0.1)',
+                                color: 'hsl(var(--color-text-muted))'
+                            }}>
+                                {habit.category}
+                            </span>
+                        </div>
+                        {habit.description && <p style={{ fontSize: 'var(--font-size-sm)', color: 'hsl(var(--color-text-muted))', marginTop: '4px' }}>{habit.description}</p>}
                     </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>

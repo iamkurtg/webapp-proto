@@ -11,10 +11,12 @@ export const useHabits = () => {
         localStorage.setItem('habits', JSON.stringify(habits));
     }, [habits]);
 
-    const addHabit = (title: string, description: string = '', color: string = '#8B5CF6') => {
+    const addHabit = (title: string, category: Habit['category'], priority: Habit['priority'], description: string = '', color: string = '#8B5CF6') => {
         const newHabit: Habit = {
             id: crypto.randomUUID(),
             title,
+            category,
+            priority,
             description,
             color,
             createdAt: new Date().toISOString(),

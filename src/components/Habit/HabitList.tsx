@@ -6,9 +6,10 @@ interface HabitListProps {
     habits: Habit[];
     onToggle: (id: string) => void;
     onDelete: (id: string) => void;
+    onUpdate: (id: string, updates: Partial<Habit>) => void;
 }
 
-export const HabitList: React.FC<HabitListProps> = ({ habits, onToggle, onDelete }) => {
+export const HabitList: React.FC<HabitListProps> = ({ habits, onToggle, onDelete, onUpdate }) => {
     if (habits.length === 0) {
         return (
             <div style={{ textAlign: 'center', padding: 'var(--space-xl) 0', color: 'hsl(var(--color-text-muted))' }}>
@@ -25,6 +26,7 @@ export const HabitList: React.FC<HabitListProps> = ({ habits, onToggle, onDelete
                     habit={habit}
                     onToggle={onToggle}
                     onDelete={onDelete}
+                    onUpdate={onUpdate}
                 />
             ))}
         </div>

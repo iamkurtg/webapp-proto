@@ -1,5 +1,6 @@
-import React from 'react';
-import type { Habit } from '../../types';
+import React, { useState } from 'react';
+import type { Habit, HabitCategory } from '../../types';
+import { HABIT_CATEGORIES } from '../../types';
 import { Card } from '../UI/Card';
 import { Button } from '../UI/Button';
 import { PRIORITY_MAP } from '../../types';
@@ -8,11 +9,35 @@ interface HabitItemProps {
     habit: Habit;
     onToggle: (id: string) => void;
     onDelete: (id: string) => void;
+    onUpdate: (id: string, updates: Partial<Habit>) => void;
 }
 
-export const HabitItem: React.FC<HabitItemProps> = ({ habit, onToggle, onDelete }) => {
+export const HabitItem: React.FC<HabitItemProps> = ({ habit, onToggle, onDelete, onUpdate }) => {
     const today = new Date().toISOString().split('T')[0];
     const isCompleted = habit.completedDates.includes(today);
+    const [isEditing, setIsEditing] = useState(false);
+    const [tempTitle, setTempTitle] = useState(habit.title);
+    const [isEditingCategory, setIsEditingCategory] = useState(false);
+    const [tempCategory, setTempCategory] = useState(habit.category);
+    const [isEditingDescription, setIsEditingDescription] = useState(false);
+    const [tempDescription, setTempDescription] = useState(habit.description || '');
+
+    const handleSave = () => {
+        if (tempTitle.trim() && tempTitle !== habit.title) {
+            onUpdate(habit.id, { title: tempTitle.trim() });
+        } else {
+            setTempTitle(habit.title); // Reset if empty or unchanged
+        }
+        setIsEditing(false);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') handleSave();
+        if (e.key === 'Escape') {
+            setTempTitle(habit.title);
+            setIsEditing(false);
+        }
+    };
 
     const getPast7Days = () => {
         return Array.from({ length: 7 }, (_, i) => {
@@ -49,32 +74,154 @@ export const HabitItem: React.FC<HabitItemProps> = ({ habit, onToggle, onDelete 
                     </button>
                     <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
-                            <h3 style={{ fontSize: 'var(--font-size-md)', fontWeight: 600, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                {habit.title}
-                                {habit.priority && (
-                                    <span
-                                        title={`${PRIORITY_MAP[habit.priority].label} Priority`}
-                                        style={{
-                                            width: '8px',
-                                            height: '8px',
-                                            borderRadius: '50%',
-                                            backgroundColor: PRIORITY_MAP[habit.priority].color,
-                                            display: 'inline-block'
-                                        }}
-                                    />
-                                )}
-                            </h3>
-                            <span style={{
-                                fontSize: 'var(--font-size-xs)',
-                                padding: '2px 8px',
-                                borderRadius: '12px',
-                                backgroundColor: 'rgba(255,255,255,0.1)',
-                                color: 'hsl(var(--color-text-muted))'
-                            }}>
-                                {habit.category}
-                            </span>
+                            {isEditing ? (
+                                <input
+                                    type="text"
+                                    value={tempTitle}
+                                    onChange={(e) => setTempTitle(e.target.value)}
+                                    onBlur={handleSave}
+                                    onKeyDown={handleKeyDown}
+                                    onFocus={(e) => e.target.select()}
+                                    autoFocus
+                                    style={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                        borderBottom: '1px solid var(--color-primary)',
+                                        color: 'white',
+                                        fontSize: 'var(--font-size-md)',
+                                        fontWeight: 600,
+                                        outline: 'none',
+                                        width: '200px',
+                                        padding: 0
+                                    }}
+                                />
+                            ) : (
+                                <h3
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsEditing(true);
+                                    }}
+                                    title="Click to edit"
+                                    style={{
+                                        fontSize: 'var(--font-size-md)',
+                                        fontWeight: 600,
+                                        margin: 0,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    {habit.title}
+                                    {habit.priority && (
+                                        <span
+                                            title={`${PRIORITY_MAP[habit.priority].label} Priority`}
+                                            style={{
+                                                width: '8px',
+                                                height: '8px',
+                                                borderRadius: '50%',
+                                                backgroundColor: PRIORITY_MAP[habit.priority].color,
+                                                display: 'inline-block'
+                                            }}
+                                        />
+                                    )}
+                                </h3>
+                            )}
+                            {isEditingCategory ? (
+                                <select
+                                    value={tempCategory}
+                                    onChange={(e) => {
+                                        const newCat = e.target.value as HabitCategory;
+                                        setTempCategory(newCat);
+                                        onUpdate(habit.id, { category: newCat });
+                                        setIsEditingCategory(false);
+                                    }}
+                                    onBlur={() => setIsEditingCategory(false)}
+                                    autoFocus
+                                    style={{
+                                        fontSize: 'var(--font-size-xs)',
+                                        padding: '2px 8px',
+                                        borderRadius: '12px',
+                                        backgroundColor: 'rgba(255,255,255,0.2)',
+                                        color: 'white',
+                                        border: '1px solid var(--color-primary)',
+                                        outline: 'none',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    {HABIT_CATEGORIES.map(cat => (
+                                        <option key={cat} value={cat} style={{ background: '#222' }}>{cat}</option>
+                                    ))}
+                                </select>
+                            ) : (
+                                <span
+                                    onClick={() => setIsEditingCategory(true)}
+                                    title="Click to change category"
+                                    style={{
+                                        fontSize: 'var(--font-size-xs)',
+                                        padding: '2px 8px',
+                                        borderRadius: '12px',
+                                        backgroundColor: 'rgba(255,255,255,0.1)',
+                                        color: 'hsl(var(--color-text-muted))',
+                                        cursor: 'pointer',
+                                        transition: 'background 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.2)'}
+                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'}
+                                >
+                                    {habit.category}
+                                </span>
+                            )}
                         </div>
-                        {habit.description && <p style={{ fontSize: 'var(--font-size-sm)', color: 'hsl(var(--color-text-muted))', marginTop: '4px' }}>{habit.description}</p>}
+                        {isEditingDescription ? (
+                            <textarea
+                                value={tempDescription}
+                                onChange={(e) => setTempDescription(e.target.value)}
+                                onBlur={() => {
+                                    onUpdate(habit.id, { description: tempDescription.trim() });
+                                    setIsEditingDescription(false);
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && !e.shiftKey) {
+                                        onUpdate(habit.id, { description: tempDescription.trim() });
+                                        setIsEditingDescription(false);
+                                    }
+                                    if (e.key === 'Escape') {
+                                        setTempDescription(habit.description || '');
+                                        setIsEditingDescription(false);
+                                    }
+                                }}
+                                autoFocus
+                                style={{
+                                    width: '100%',
+                                    background: 'transparent',
+                                    border: 'none',
+                                    borderBottom: '1px solid var(--color-primary)',
+                                    color: 'hsl(var(--color-text-muted))',
+                                    fontSize: 'var(--font-size-sm)',
+                                    marginTop: '4px',
+                                    outline: 'none',
+                                    resize: 'none',
+                                    padding: 0,
+                                    minHeight: '1.5em'
+                                }}
+                            />
+                        ) : (
+                            <p
+                                onClick={() => setIsEditingDescription(true)}
+                                title="Click to edit notes"
+                                style={{
+                                    fontSize: 'var(--font-size-sm)',
+                                    color: 'hsl(var(--color-text-muted))',
+                                    marginTop: '4px',
+                                    cursor: 'pointer',
+                                    minHeight: habit.description ? 'auto' : '1.5em',
+                                    fontStyle: habit.description ? 'normal' : 'italic'
+                                }}
+                            >
+                                {habit.description || 'Add notes...'}
+                            </p>
+                        )}
                     </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>

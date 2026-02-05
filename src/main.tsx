@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { GeminiProvider } from './context/GeminiContext'
 import './styles/variables.css'
 import './styles/global.css'
 import './styles/components.css'
@@ -11,6 +12,8 @@ import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <GeminiProvider>
+      <App />
+    </GeminiProvider>
   </StrictMode>,
 )

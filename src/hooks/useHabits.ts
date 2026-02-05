@@ -45,5 +45,11 @@ export const useHabits = () => {
         setHabits(prev => prev.filter(h => h.id !== id));
     };
 
-    return { habits, addHabit, toggleHabit, deleteHabit };
+    const updateHabit = (id: string, updates: Partial<Habit>) => {
+        setHabits(prev => prev.map(habit =>
+            habit.id === id ? { ...habit, ...updates } : habit
+        ));
+    };
+
+    return { habits, addHabit, toggleHabit, deleteHabit, updateHabit };
 };

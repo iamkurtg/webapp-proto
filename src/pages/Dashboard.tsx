@@ -5,10 +5,12 @@ import { Modal } from '../components/UI/Modal';
 import { useHabits } from '../hooks/useHabits';
 import { useUser } from '../hooks/useUser';
 import { HabitList } from '../components/Habit/HabitList';
+import { SettingsModal } from '../components/UI/SettingsModal';
+import { AIHabitModal } from '../components/Habit/AIHabitModal';
 import { HABIT_CATEGORIES, type HabitCategory, type Priority, PRIORITY_MAP } from '../types';
 
 export const Dashboard: React.FC = () => {
-    const { habits, addHabit, toggleHabit, deleteHabit } = useHabits();
+    const { habits, addHabit, toggleHabit, deleteHabit, updateHabit } = useHabits();
     const { name, setName } = useUser();
     const [isNameEditing, setIsNameEditing] = useState(false);
     const [tempName, setTempName] = useState('');
@@ -17,6 +19,11 @@ export const Dashboard: React.FC = () => {
     const [newHabitCategory, setNewHabitCategory] = useState<HabitCategory>(HABIT_CATEGORIES[0]);
     const [selectedCategories, setSelectedCategories] = useState<HabitCategory[]>([]);
     const [newHabitPriority, setNewHabitPriority] = useState<Priority>('none');
+    const [newHabitNotes, setNewHabitNotes] = useState('');
+
+    // AI & Settings State
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [isAIModalOpen, setIsAIModalOpen] = useState(false);
 
 
     type SortKey = 'priority' | 'name' | 'date';
@@ -100,10 +107,11 @@ export const Dashboard: React.FC = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (newHabitTitle.trim()) {
-            addHabit(newHabitTitle, newHabitCategory, newHabitPriority);
+            addHabit(newHabitTitle, newHabitCategory, newHabitPriority, newHabitNotes);
             setNewHabitTitle('');
             setNewHabitCategory(HABIT_CATEGORIES[0]);
             setNewHabitPriority('none');
+            setNewHabitNotes('');
             setIsModalOpen(false);
         }
     };
@@ -161,7 +169,15 @@ export const Dashboard: React.FC = () => {
                     </div>
                     <p style={{ color: 'hsl(var(--color-text-muted))' }}>Let's crush your goals today!</p>
                 </div>
-                <Button variant="primary" onClick={() => setIsModalOpen(true)}>New Habit</Button>
+                <div style={{ display: 'flex', gap: 'var(--space-md)' }}>
+                    <Button variant="ghost" onClick={() => setIsSettingsOpen(true)} aria-label="Settings">
+                        ⚙️
+                    </Button>
+                    <Button variant="outline" onClick={() => setIsAIModalOpen(true)}>
+                        ✨ Magic Create
+                    </Button>
+                    <Button variant="primary" onClick={() => setIsModalOpen(true)}>New Habit</Button>
+                </div>
             </header>
 
             <div style={{
@@ -353,6 +369,7 @@ export const Dashboard: React.FC = () => {
                     habits={filteredHabits}
                     onToggle={toggleHabit}
                     onDelete={deleteHabit}
+                    onUpdate={updateHabit}
                 />
             </section>
 
@@ -439,12 +456,54 @@ export const Dashboard: React.FC = () => {
                         </div>
                     </div>
 
+                    <div style={{ marginBottom: 'var(--space-lg)' }}>
+                        <label
+                            htmlFor="notes"
+                            style={{ display: 'block', marginBottom: 'var(--space-sm)', fontWeight: 500 }}
+                        >
+                            Notes (Optional)
+                        </label>
+                        <textarea
+                            id="notes"
+                            value={newHabitNotes}
+                            onChange={(e) => setNewHabitNotes(e.target.value)}
+                            placeholder="Add some details about this habit..."
+                            style={{
+                                width: '100%',
+                                padding: 'var(--space-md)',
+                                borderRadius: 'var(--radius-md)',
+                                border: '1px solid var(--glass-border)',
+                                background: 'rgba(255,255,255,0.05)',
+                                color: 'white',
+                                fontSize: 'var(--font-size-md)',
+                                minHeight: '100px',
+                                resize: 'vertical',
+                                outline: 'none'
+                            }}
+                        />
+                    </div>
+
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-sm)' }}>
                         <Button type="button" onClick={() => setIsModalOpen(false)}>Cancel</Button>
                         <Button type="submit" variant="primary">Create Habit</Button>
                     </div>
                 </form>
             </Modal>
+
+            <SettingsModal
+                isOpen={isSettingsOpen}
+                onClose={() => setIsSettingsOpen(false)}
+                key={isSettingsOpen ? 'settings-open' : 'settings-closed'}
+            />
+
+            <AIHabitModal
+                isOpen={isAIModalOpen}
+                onClose={() => setIsAIModalOpen(false)}
+                onAddHabit={(title, category, priority, description) => {
+                    addHabit(title, category, priority, description);
+                    setIsAIModalOpen(false);
+                }}
+            />
         </Layout >
     );
 };

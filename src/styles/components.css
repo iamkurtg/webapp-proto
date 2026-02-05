@@ -40,6 +40,29 @@
     width: 100%;
 }
 
+.btn--outline {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: hsl(var(--color-text-main));
+}
+
+.btn--outline:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: hsl(var(--color-primary));
+    transform: translateY(-1px);
+}
+
+.btn--ghost {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+}
+
+.btn--ghost:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: transparent;
+}
+
 /* Card */
 .card {
     background: var(--glass-bg);

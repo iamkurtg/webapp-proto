@@ -1,0 +1,41 @@
+:root {
+  /* Colors */
+  --color-primary: 250 100% 70%; /* A vivid purple */
+  --color-secondary: 180 100% 50%; /* Cyan accent */
+  --color-bg: 220 20% 10%; /* Dark blue-grey background */
+  --color-surface: 220 20% 18%; /* Slightly lighter surface */
+  --color-text-main: 220 10% 95%;
+  --color-text-muted: 220 10% 70%;
+  --color-danger: 0 80% 60%;
+  --color-success: 150 80% 40%;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(30, 35, 50, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+  /* Typography */
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+
+  /* Radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-full: 9999px;
+  
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+}

@@ -8,9 +8,10 @@ import { HabitList } from '../components/Habit/HabitList';
 import { SettingsModal } from '../components/UI/SettingsModal';
 import { AIHabitModal } from '../components/Habit/AIHabitModal';
 import { HABIT_CATEGORIES, type HabitCategory, type Priority, PRIORITY_MAP } from '../types';
+import { DEMO_HABITS } from '../utils/demoData';
 
 export const Dashboard: React.FC = () => {
-    const { habits, addHabit, toggleHabit, deleteHabit, updateHabit } = useHabits();
+    const { habits, addHabit, toggleHabit, deleteHabit, updateHabit, resetHabits } = useHabits();
     const { name, setName } = useUser();
     const [isNameEditing, setIsNameEditing] = useState(false);
     const [tempName, setTempName] = useState('');
@@ -493,6 +494,12 @@ export const Dashboard: React.FC = () => {
             <SettingsModal
                 isOpen={isSettingsOpen}
                 onClose={() => setIsSettingsOpen(false)}
+                onLoadDemoData={() => {
+                    if (window.confirm('This will replace all your current habits with demo data. Are you sure?')) {
+                        resetHabits(DEMO_HABITS);
+                        setIsSettingsOpen(false);
+                    }
+                }}
                 key={isSettingsOpen ? 'settings-open' : 'settings-closed'}
             />
 

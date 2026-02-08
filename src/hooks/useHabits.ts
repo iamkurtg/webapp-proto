@@ -51,5 +51,9 @@ export const useHabits = () => {
         ));
     };
 
-    return { habits, addHabit, toggleHabit, deleteHabit, updateHabit };
+    const resetHabits = (newHabits: Habit[]) => {
+        setHabits(newHabits);
+    };
+
+    return { habits, addHabit, toggleHabit, deleteHabit, updateHabit, resetHabits };
 };

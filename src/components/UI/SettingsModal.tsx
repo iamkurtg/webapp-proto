@@ -6,9 +6,10 @@ import { useGemini } from '../../hooks/useGemini';
 interface SettingsModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onLoadDemoData: () => void;
 }
 
-export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
+export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onLoadDemoData }) => {
     const { apiKey, setApiKey, model, setModel, fetchAvailableModels } = useGemini();
     const [localKey, setLocalKey] = useState(apiKey);
     const [status, setStatus] = useState<'idle' | 'saved'>('idle');
@@ -124,6 +125,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                             </ul>
                         </div>
                     )}
+                </div>
+
+                <div style={{ marginTop: 'var(--space-xl)', borderTop: '1px solid var(--glass-border)', paddingTop: 'var(--space-lg)' }}>
+                    <h3 style={{ fontSize: 'var(--font-size-md)', marginBottom: 'var(--space-sm)', color: 'white' }}>Danger Zone</h3>
+                    <Button
+                        variant="outline"
+                        onClick={onLoadDemoData}
+                        style={{ borderColor: 'hsl(var(--color-danger))', color: 'hsl(var(--color-danger))' }}
+                    >
+                        Load Demo Data ⚠️
+                    </Button>
                 </div>
 
                 <div style={{ marginTop: 'var(--space-xl)' }}>
